@@ -136,8 +136,6 @@ php passbolt-restore.php
 - The `restore/` folder and `.env` are excluded from Git (see `.gitignore`) to prevent
   accidental commits of sensitive backup data.
   volume. It will not be regenerated on subsequent restarts.
-- The certificate is generated with `openssl` — it does not use Certbot or Let's Encrypt,
-  which require public internet access to validate domain ownership.
 - `APP_FULL_BASE_URL` is set as an environment variable even though `passbolt.php` also
   contains `fullBaseUrl`, because Docker environment variables take priority over
   `passbolt.php` and the Docker image defaults to `https://passbolt.local` if it is not set.
