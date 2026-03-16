@@ -1,0 +1,81 @@
+services:
+
+  db:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: "true"
+      MYSQL_DATABASE:             ${MYSQL_DATABASE}
+      MYSQL_USER:                 ${MYSQL_USER}
+      MYSQL_PASSWORD:             ${MYSQL_PASSWORD}
+    volumes:
+      - database_volume:/var/lib/mysql
+      # MariaDB auto-imports any .sql or .sql.gz file found here on first boot
+      - ./restore:/docker-entrypoint-initdb.d:ro
+
+  # The non-root image listens on 8080/4433 internally (not configurable)
+  passbolt:
+    image: passbolt/passbolt:latest-ce-non-root
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      APP_FULL_BASE_URL:         ${APP_FULL_BASE_URL}
+      DATASOURCES_DEFAULT_HOST:  db
+    volumes:
+      - gpg_volume:/etc/passbolt/gpg
+      - jwt_volume:/etc/passbolt/jwt
+      - ./restore/passbolt.php:/etc/passbolt/passbolt.php:ro
+    command:
+      [
+        "/usr/bin/wait-for.sh",
+        "-t",
+        "0",
+        "db:3306",
+        "--",
+        "/docker-entrypoint.sh",
+      ]
+
+  # One-shot: generates a self-signed TLS certificate for nginx
+  cert-init:
+    image: alpine:3.19
+    environment:
+      PASSBOLT_DOMAIN: ${PASSBOLT_DOMAIN}
+    volumes:
+      - cert_data:/certs
+    command: >
+      sh -c "
+        if [ ! -f /certs/server.crt ]; then
+          apk add --no-cache openssl &&
+          openssl req -x509 -nodes -days 3650 -newkey rsa:2048 \
+            -keyout /certs/server.key \
+            -out    /certs/server.crt \
+            -subj   \"/CN=${PASSBOLT_DOMAIN}\" \
+            -addext \"subjectAltName=DNS:${PASSBOLT_DOMAIN}\" &&
+          echo 'Certificate generated OK'
+        else
+          echo 'Certificate already exists, skipping'
+        fi
+      "
+    restart: "no"
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    depends_on:
+      passbolt:
+        condition: service_started
+      cert-init:
+        condition: service_completed_successfully
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/passbolt.conf:ro
+      - cert_data:/certs:ro
+
+volumes:
+  database_volume:
+  gpg_volume:
+  jwt_volume:
+  cert_data:

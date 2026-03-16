@@ -1,0 +1,6 @@
+# Ignore restore folder contents but keep the folder itself tracked
+restore/*
+!restore/.gitkeep
+
+# Ignore the generated .env file to avoid leaking credentials
+.env
