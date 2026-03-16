@@ -54,23 +54,7 @@ Copy your backup files into the `restore/` folder as shown in the structure abov
 > into `restore/` with any filename you like — no configuration needed. Both plain `.sql`
 > and compressed `.sql.gz` files are supported.
 
-### 2. Point your local hosts file to this machine
-
-Since you are testing with the original domain, redirect it to your Docker host on your
-local machine only — production is unaffected.
-
-Add the following line to your hosts file, replacing the IP with your Docker host's IP:
-
-```
-<docker-host-ip>    passbolt.yourdomain.com
-```
-
-- **Windows:** `C:\Windows\System32\drivers\etc\hosts`
-- **macOS / Linux:** `/etc/hosts`
-
-> Remember to remove or comment out this line when you are done testing.
-
-### 3. Run the restore script
+### 2. Run the restore script
 
 The restore script reads `restore/passbolt.php`, generates `.env`, starts the containers,
 and copies the GPG keys into the running Passbolt container with the correct permissions.
@@ -87,6 +71,22 @@ The script performs these steps automatically:
 4. Waits for the Passbolt container to be running
 5. Copies GPG keys into the container (`docker cp`)
 6. Sets correct ownership (`www-data`) and permissions (`440`) via `docker exec`
+
+### 3. Point your local hosts file to this machine
+
+Since you are testing with the original domain, redirect it to your Docker host on your
+local machine only — production is unaffected.
+
+Add the following line to your hosts file, replacing the IP with your Docker host's IP:
+
+```
+<docker-host-ip>    passbolt.yourdomain.com
+```
+
+- **Windows:** `C:\Windows\System32\drivers\etc\hosts`
+- **macOS / Linux:** `/etc/hosts`
+
+> Remember to remove or comment out this line when you are done testing.
 
 ### 4. Accept the self-signed certificate
 
