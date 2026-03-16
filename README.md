@@ -101,15 +101,9 @@ Add the following line to your hosts file, replacing the IP with your Docker hos
 
 > Remember to remove or comment out this line when you are done testing.
 
-### 4. Accept the self-signed certificate
+### 4. Open Passbolt URL
 
-Open your browser and navigate to your Passbolt URL. You will see a
-**"Your connection is not private"** warning — this is expected since the certificate is
-self-signed and not issued by a trusted CA.
-
-Click **Advanced → Proceed** (Chrome) or **Accept the Risk and Continue** (Firefox).
-You only need to do this once per browser. The Passbolt browser extension should then
-connect normally since it sees valid HTTPS on the expected domain.
+Open your browser and navigate to your Passbolt URL. 
 
 ### 5. Verify the restore
 
