@@ -59,16 +59,16 @@ Copy your backup files into the `restore/` folder as shown in the structure abov
 
 ### 2. Run the restore script
 
-The restore script reads `restore/passbolt.php`, generates `.env`, starts the containers,
+The restore script reads `passbolt-restore.php`, generates `.env`, starts the containers,
 and copies the GPG keys into the running Passbolt container with the correct permissions.
 
 ```bash
-php restore-passbolt.php
+php passbolt-restore.php
 ```
 
 The script performs these steps automatically:
 
-1. Reads database credentials, `fullBaseUrl`, and domain from `restore/passbolt.php`
+1. Reads database credentials, `fullBaseUrl`, and domain from `passbolt-restore.php`
 2. Writes `.env` for Docker Compose
 3. Runs `docker compose up -d`
 4. Waits for the Passbolt container to be running
