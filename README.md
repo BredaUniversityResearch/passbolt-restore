@@ -105,7 +105,7 @@ Add the following line to your hosts file, replacing the IP with your Docker hos
 
 > Remember to remove or comment out this line when you are done testing.
 
-### 5. Accept the self-signed certificate
+### 5. Open Passbolt in your browser
 
 Navigate to your Passbolt URL and log in.
 
